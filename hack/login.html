@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Verse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link href="./styles.css" rel="stylesheet" />
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#0b1020" />
+  <style>
+    /* Login specific polish */
+    .login-wrap{ min-height: 100vh; display:grid; place-items:center; padding: 24px; }
+    .login-card{ width: min(880px, 94%); display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); backdrop-filter: blur(8px); padding: 20px; }
+    .login-left h1{ font-family: Poppins, Inter, system-ui; font-weight: 800; font-size: 34px; margin: 6px 0; }
+    .login-left p{ color: var(--muted); margin: 0 0 12px; }
+    .badge-row{ display:flex; gap:8px; flex-wrap: wrap; margin: 8px 0 16px; }
+    .badge-pill{ background: rgba(255,255,255,0.10); border:1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 999px; display:flex; gap:6px; align-items:center; font-size: 12px; }
+    .actions{ display:flex; gap:10px; margin-top: 12px; }
+    .login-right{ position: relative; border-radius: 16px; overflow: hidden; border:1px solid var(--border); background: radial-gradient(120% 100% at 20% 20%, rgba(108,140,255,0.25), transparent), radial-gradient(120% 100% at 80% 50%, rgba(255,122,69,0.25), transparent); display:grid; place-items:center; }
+    .illus{ text-align:center; padding: 16px; color: var(--muted); }
+    .illus-icons{ font-size: 40px; display:flex; gap:12px; justify-content:center; color: #c9d1f7; opacity: 0.9; }
+    .shape{ position:absolute; border-radius: 999px; filter: blur(16px); opacity:0.8; animation: float 9s ease-in-out infinite; }
+    .shape.s1{ width: 160px; height: 160px; background: radial-gradient(circle at 30% 30%, #6c8cff, transparent); top: 10%; left: 8%; }
+    .shape.s2{ width: 120px; height: 120px; background: radial-gradient(circle at 50% 50%, #9b6bff, transparent); bottom: 12%; right: 14%; animation-delay: -3s; }
+    .shape.s3{ width: 140px; height: 140px; background: radial-gradient(circle at 40% 60%, #14b8a6, transparent); top: 40%; right: 0; animation-delay: -5s; }
+    /* Glow logo */
+    .cv-brand{ display:flex; align-items:center; gap:10px; }
+    .cv-logo{ width:32px; height:32px; border-radius:8px; background: linear-gradient(135deg,#60a5fa,#a78bfa,#34d399); box-shadow:0 0 24px rgba(96,165,250,0.55); animation: pulse 2.2s ease-in-out infinite; }
+    @keyframes pulse{ 0%,100%{ filter: brightness(1) } 50%{ filter: brightness(1.25) } }
+    .cv-name{ font-weight:900; letter-spacing:0.3px; }
+    .btn.grad{ background: linear-gradient(90deg, #4f46e5, #06b6d4); border:none; box-shadow: 0 10px 26px rgba(6,182,212,0.25); transition: transform .15s ease, filter .2s ease; }
+    .btn.grad:hover{ transform: translateY(-1px); filter: brightness(1.02); }
+    @media (max-width: 860px){ .login-card{ grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <script>
+    // If already logged in, go to dashboard
+    try{ if(localStorage.getItem('cv_auth')==='1'){ location.replace('dashboard.html'); } }catch(e){}
+  </script>
+  <div class="app-gradient-bg"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+
+  <div class="login-wrap">
+    <div class="login-card appear">
+      <div class="login-left">
+        <div class="badge-row">
+          <span class="badge-pill"><i class="ri-award-line"></i> Student Badge</span>
+          <span class="badge-pill"><i class="ri-team-line"></i> Community</span>
+          <span class="badge-pill"><i class="ri-calendar-event-line"></i> Events</span>
+        </div>
+        <div class="cv-brand"><div class="cv-logo"></div><div class="cv-name">Campus Verse</div></div>
+        <h1>Welcome to CampusVerse</h1>
+        <div style="margin:4px 0 10px;color:#cbd5e1;font-weight:600">Sri Eshwar College of Engineering</div>
+        <div style="display:inline-flex; background: rgba(255,255,255,0.10); border:1px solid var(--border); padding:4px; border-radius:999px; gap:4px; margin-bottom:8px;">
+          <a href="login.html" class="btn" style="background:#ffffff22;color:#fff;border:none;padding:8px 14px;border-radius:999px;">Sign In</a>
+          <a href="register.html" class="btn" style="background:transparent;color:#e2e8f0;border:none;padding:8px 14px;border-radius:999px;">Sign Up</a>
+        </div>
+        <p>Welcome to CampusVerse! Explore everything happening around your campus — from exciting events and volunteering opportunities to staying connected through messages and customizing your settings.</p>
+        <ul style="margin:0;padding-left:18px;color:var(--muted)">
+          <li><b>Events:</b> Discover upcoming campus happenings like workshops, festivals, and networking sessions to stay engaged.</li>
+          <li><b>Volunteering:</b> Contribute to your community by finding volunteering roles that fit your interests and skills.</li>
+          <li><b>Messages:</b> Connect effortlessly with peers, mentors, and event organizers to keep communication flowing.</li>
+          <li><b>Settings:</b> Make CampusVerse yours by updating your profile, preferences, and notifications.</li>
+        </ul>
+        <form id="signinForm" style="display:grid;gap:10px;max-width:420px;margin-top:8px;">
+          <label style="display:grid;gap:6px;color:var(--muted)">Email
+            <input id="signinEmail" type="email" placeholder="you@campus.edu" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#ffffff;color:#0f172a" required />
+          </label>
+          <label style="display:grid;gap:6px;color:var(--muted)">Password
+            <input id="signinPass" type="password" placeholder="••••••••" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#ffffff;color:#0f172a" required />
+          </label>
+          <div style="display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:14px;">
+            <label style="display:flex;align-items:center;gap:6px;"><input id="rememberMe" type="checkbox" /> Remember me</label>
+            <a href="#" style="text-decoration:none;color:#93c5fd;">Forgot Password?</a>
+          </div>
+          <button class="btn grad" type="submit"><i class="ri-login-circle-line"></i> Sign In</button>
+        </form>
+        <p style="margin-top:8px;color:var(--muted);font-size:14px">Don't have an account? <a href="register.html" style="text-decoration:none;color:#60a5fa;font-weight:600">Register</a></p>
+
+        <div class="cards-grid" style="margin-top: 16px; grid-template-columns: repeat(2, minmax(0,1fr));">
+          <div class="card appear" style="transition-delay:60ms">
+            <div class="header"><div class="icon"><i class="ri-calendar-event-line"></i></div><div><div class="title">Events</div></div></div>
+            <p style="margin:8px 0 0; color: var(--muted)">Discover upcoming campus events — workshops, festivals, and networking sessions. Stay connected with what’s happening around you!</p>
+          </div>
+          <div class="card appear" style="transition-delay:120ms">
+            <div class="header"><div class="icon"><i class="ri-hand-heart-line"></i></div><div><div class="title">Volunteering</div></div></div>
+            <p style="margin:8px 0 0; color: var(--muted)">Join hands with your community! Explore volunteering opportunities that match your skills and make a real impact.</p>
+          </div>
+          <div class="card appear" style="transition-delay:180ms">
+            <div class="header"><div class="icon"><i class="ri-chat-1-line"></i></div><div><div class="title">Messages</div></div></div>
+            <p style="margin:8px 0 0; color: var(--muted)">Chat with peers, mentors, and event organizers. Stay in touch and never miss an update!</p>
+          </div>
+          <div class="card appear" style="transition-delay:240ms">
+            <div class="header"><div class="icon"><i class="ri-settings-3-line"></i></div><div><div class="title">Settings</div></div></div>
+            <p style="margin:8px 0 0; color: var(--muted)">Personalize your CampusVerse experience — update your profile, preferences, and notification settings.</p>
+          </div>
+        </div>
+      </div>
+      <div class="login-right">
+        <div class="shape s1"></div>
+        <div class="shape s2"></div>
+        <div class="shape s3"></div>
+        <div class="illus">
+          <div class="illus-icons"><i class="ri-book-3-line"></i><i class="ri-group-line"></i><i class="ri-sparkling-2-line"></i></div>
+          <h3 style="margin:10px 0 4px">Explore. Engage. Excel.</h3>
+          <p>Student-themed illustrations, abstract gradients, and a friendly UI.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+  <script>
+    // Sign in mock: require form submit to proceed
+    (function(){
+      const form = document.getElementById('signinForm');
+      form?.addEventListener('submit',(e)=>{
+        e.preventDefault();
+        const email = (document.getElementById('signinEmail')||{}).value||'';
+        const remember = document.getElementById('rememberMe')?.checked;
+        try{
+          localStorage.setItem('cv_auth','1');
+          if(remember && email) localStorage.setItem('cv_email', email);
+          localStorage.setItem('cv_toast', 'Welcome back to Campus Verse!');
+        }catch(err){}
+        location.href='dashboard.html';
+      });
+    })();
+  </script>
+</body>
+</html>

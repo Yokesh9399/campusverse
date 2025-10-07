@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Verse Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link href="./styles.css" rel="stylesheet" />
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#0b1020" />
+</head>
+<body class="theme-eco" data-theme="light">
+  <script>
+    // Require login: if not authed, go to login page
+    try{ if(localStorage.getItem('cv_auth')!=='1'){ location.replace('login.html'); } }catch(e){}
+  </script>
+  <div class="app-gradient-bg"></div>
+  <div class="app-photo-bg" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div id="loadingBar" aria-hidden="true"><div class="bar"></div></div>
+
+  <div class="layout-eco">
+    <aside class="sidebar-eco" aria-label="Primary">
+      <div class="side-brand"><i class="ri-seedling-line"></i> Campus Verse Events</div>
+      <nav class="side-nav">
+        <a href="index.html" class="active"><i class="ri-dashboard-2-line"></i> Dashboard</a>
+        <a href="#events"><i class="ri-calendar-event-line"></i> Events</a>
+        <a href="volunteering.html"><i class="ri-hand-heart-line"></i> Volunteering</a>
+        <a href="#leaderboard"><i class="ri-trophy-line"></i> Leaderboard</a>
+        <a href="mini-games.html"><i class="ri-gamepad-line"></i> Mini-Games</a>
+        <a href="#messages"><i class="ri-chat-1-line"></i> Messages</a>
+        <a href="settings.html"><i class="ri-settings-3-line"></i> Settings</a>
+      </nav>
+    </aside>
+    <div class="content-eco">
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🌐</span>
+      <div class="brand-text">
+        <h1>Campus Verse Events</h1>
+        <p>Volunteer Hub</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="active"><i class="ri-home-5-line"></i><span>Home</span></a>
+      <a href="dashboard.html"><i class="ri-dashboard-line"></i><span>Dashboard</span></a>
+      <button id="btnSSO" class="btn primary"><i class="ri-shield-keyhole-line"></i> Login with SSO</button>
+      <button id="btnMobilePreview" class="btn ghost" title="Toggle Mobile Preview"><i class="ri-smartphone-line"></i></button>
+      <button id="btnTheme" class="btn ghost" title="Toggle Theme"><i class="ri-sun-line"></i></button>
+      <span id="pointsBadge" class="badge">0 pts</span>
+      <span id="welcomeChip" class="badge" title="Signed in user" style="display:none;"></span>
+      <label class="lang-switch">
+        <i class="ri-translate-2"></i>
+        <select id="langSelect">
+          <option value="en">English</option>
+          <option value="hi">हिंदी</option>
+        </select>
+      </label>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-copy">
+        <h2>Your vibrant gateway to campus engagement</h2>
+        <p>Discover opportunities, events, and navigate campus spaces in real-time. Built for students, powered by community.</p>
+        <div class="searchbar">
+          <i class="ri-search-2-line"></i>
+          <input id="searchInput" type="text" placeholder="Search Volunteer Opportunities (e.g., Tutoring, Clean-up, Tech Club)" />
+          <button id="searchBtn" class="btn primary">Search</button>
+        </div>
+        <div class="filters">
+          <div class="filter-chips">
+            <button class="chip" data-filter="environment"><i class="ri-leaf-line"></i> Environment</button>
+            <button class="chip" data-filter="education"><i class="ri-book-2-line"></i> Education</button>
+            <button class="chip" data-filter="health"><i class="ri-heart-2-line"></i> Health</button>
+            <button class="chip" data-filter="tech"><i class="ri-cpu-line"></i> Tech</button>
+            <button class="chip" data-filter="arts"><i class="ri-brush-line"></i> Arts</button>
+          </div>
+          <div class="filter-selects">
+            <label>
+              <i class="ri-star-line"></i>
+              <select id="programFilter">
+                <option value="">Any Program</option>
+                <option value="CS">Computer Science</option>
+                <option value="BUS">Business</option>
+                <option value="BIO">Biology</option>
+                <option value="ENG">Engineering</option>
+              </select>
+            </label>
+            <label>
+              <i class="ri-time-line"></i>
+              <select id="timeFilter">
+                <option value="">Any Time</option>
+                <option value="this-week">This Week</option>
+                <option value="this-month">This Month</option>
+                <option value="weekend">Weekend</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- Recommendations -->
+      <div class="panel" id="recoPanel">
+        <h4><i class="ri-magic-line"></i> Recommended For You</h4>
+        <div id="recoGrid" class="cards-grid"></div>
+      </div>
+      <div class="hero-art">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <div class="left">
+        <h3 class="section-title"><i class="ri-hand-heart-line"></i> Volunteer Opportunities</h3>
+        <div id="cards" class="cards-grid"></div>
+      </div>
+      <aside class="right">
+        <div class="panel upcoming" id="events">
+          <h4><i class="ri-calendar-event-line"></i> Upcoming Events</h4>
+          <ul id="eventsList" class="events-list"></ul>
+        </div>
+        <div class="panel map-panel">
+          <h4><i class="ri-map-pin-line"></i> Campus Map</h4>
+          <div id="map" class="map"></div>
+          <div class="map-legend">
+            <span><i class="ri-map-pin-2-fill color-classroom"></i> Classroom</span>
+            <span><i class="ri-map-pin-2-fill color-lab"></i> Lab</span>
+            <span><i class="ri-map-pin-2-fill color-venue"></i> Venue</span>
+          </div>
+          <div class="map-toggles">
+            <label><input type="checkbox" id="toggleLandmarks" /> <i class="ri-landscape-line"></i> Landmarks</label>
+            <label><input type="checkbox" id="toggleAccessible" /> <i class="ri-wheelchair-line"></i> Accessibility Routes</label>
+          </div>
+        </div>
+      </aside>
+    </section>
+    <!-- Media Gallery -->
+    <section class="panel" id="galleryPanel">
+      <h4><i class="ri-image-2-line"></i> Media Gallery</h4>
+      <div id="galleryGrid" class="cards-grid"></div>
+    </section>
+
+    <!-- Stories Wall -->
+    <section class="panel" id="storiesPanel">
+      <h4><i class="ri-quill-pen-line"></i> Volunteer Stories Wall</h4>
+      <div id="storiesGrid" class="cards-grid"></div>
+    </section>
+
+    <!-- Highlights Feed -->
+    <section class="panel" id="highlightsPanel">
+      <h4><i class="ri-flashlight-line"></i> Event Highlights</h4>
+      <div id="highlightsFeed" class="feed"></div>
+    </section>
+
+    <!-- Lost & Found -->
+    <section class="panel" id="lostFoundPanel">
+      <h4><i class="ri-search-eye-line"></i> Lost & Found</h4>
+      <div id="lostFoundGrid" class="cards-grid"></div>
+    </section>
+
+    <!-- Smart Campus Utilities -->
+    <section class="panel" id="utilitiesPanel">
+      <h4><i class="ri-map-pin-2-line"></i> Campus Utilities</h4>
+      <div id="utilitiesGrid" class="cards-grid"></div>
+    </section>
+
+    <!-- Leaderboard & Certificates -->
+    <section class="panel" id="leaderCertPanel">
+      <h4><i class="ri-trophy-line"></i> Leaderboard & Certificates</h4>
+      <div class="cards-two">
+        <div id="leaderboard" class="cards-grid"></div>
+        <div id="certificates" class="cards-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="ssoModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close"><i class="ri-close-line"></i></button>
+      <h3><i class="ri-shield-keyhole-line"></i> Campus Single Sign-On</h3>
+      <p>Prototype SSO flow. Use your campus email to continue.</p>
+      <form id="ssoForm" class="sso-form">
+        <label>Email
+          <input type="email" placeholder="you@university.edu" required />
+        </label>
+        <label>Password
+          <input type="password" placeholder="••••••••" required />
+        </label>
+        <button type="submit" class="btn primary full">Continue</button>
+        <button type="button" class="btn ghost full" id="btnSSOGuest"><i class="ri-user-smile-line"></i> Continue as Guest</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2025 Campus Verse Events • Prototype</p>
+  </footer>
+    </div>
+  </div>
+
+  <!-- Messaging Drawer -->
+  <aside id="messagesDrawer" class="drawer hidden" aria-label="Messages">
+    <div class="drawer-header">
+      <h4><i class="ri-chat-1-line"></i> Messages</h4>
+      <button id="closeDrawer" class="btn ghost"><i class="ri-close-line"></i></button>
+    </div>
+    <div id="messagesList" class="drawer-body"></div>
+    <div class="drawer-input">
+      <input id="messageInput" type="text" placeholder="Type a message..." />
+      <button id="sendMessage" class="btn primary"><i class="ri-send-plane-2-line"></i></button>
+    </div>
+  </aside>
+
+  <!-- Chatbot -->
+  <button id="chatbotToggle" class="chatbot-fab" title="Assistant"><i class="ri-robot-2-line"></i></button>
+  <div id="chatbotPanel" class="chatbot hidden" role="dialog" aria-modal="true">
+    <div class="chatbot-header">
+      <span><i class="ri-robot-2-line"></i> Campus Assistant</span>
+      <button id="chatbotClose" class="btn ghost"><i class="ri-close-line"></i></button>
+    </div>
+    <div id="chatbotBody" class="chatbot-body"></div>
+    <div class="chatbot-input">
+      <input id="chatbotText" type="text" placeholder="Ask me to find events or navigate..." />
+      <button id="chatbotSend" class="btn primary"><i class="ri-send-plane-2-line"></i></button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./app.js"></script>
+  <script>
+    (function(){
+      try{
+        const n = localStorage.getItem('cv_name');
+        const chip = document.getElementById('welcomeChip');
+        if(n && chip){ chip.textContent = 'Welcome, ' + n; chip.style.display='inline-block'; }
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>

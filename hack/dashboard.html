@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard • Campus Engagement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link href="./styles.css" rel="stylesheet" />
+  <link rel="manifest" href="./manifest.webmanifest">
+</head>
+<body class="dashboard-body theme-eco" data-theme="light">
+  <style>html{scroll-behavior:smooth}</style>
+  <div class="layout-eco">
+    <aside class="sidebar-eco" aria-label="Primary">
+      <div class="side-brand"><i class="ri-seedling-line"></i> Campus Verse Events</div>
+      <nav class="side-nav">
+        <a href="index.html"><i class="ri-dashboard-2-line"></i> Dashboard</a>
+        <a href="#leaderboard"><i class="ri-trophy-line"></i> Leaderboard</a>
+        <a href="#challenges"><i class="ri-flag-line"></i> Challenges</a>
+        <a href="mini-games.html"><i class="ri-gamepad-line"></i> Mini-Games</a>
+        <a href="#analytics" class="active"><i class="ri-bar-chart-2-line"></i> Analytics</a>
+        <a href="settings.html"><i class="ri-settings-3-line"></i> Settings</a>
+      </nav>
+    </aside>
+    <div class="content-eco">
+      <header class="topbar" style="position:sticky;top:0;z-index:5;">
+        <div class="brand">
+          <span class="logo">📊</span>
+          <div class="brand-text">
+            <h1>Sustainability Dashboard</h1>
+            <p>Analytics & Insights</p>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="index.html"><i class="ri-home-5-line"></i><span>Home</span></a>
+          <a href="dashboard.html" class="active"><i class="ri-dashboard-line"></i><span>Analytics</span></a>
+          <span id="welcomeChipDash" class="badge" style="margin-left:8px;display:none"></span>
+        </nav>
+      </header>
+
+      <main class="container dashboard" id="analytics">
+        <section class="kpis">
+          <div class="kpi-card">
+            <span class="kpi-label">Energy Consumption</span>
+            <span id="kpiVolunteers" class="kpi-value">4,300 kWh</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Water Usage</span>
+            <span id="kpiEvents" class="kpi-value">29,000 L</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Recycling Rate</span>
+            <span id="kpiRate" class="kpi-value">65%</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Carbon Footprint</span>
+            <span id="kpiSpaces" class="kpi-value">12.5 tCO₂e</span>
+          </div>
+        </section>
+
+        <section class="dashboard-grid">
+          <div class="panel chart-panel">
+            <h4><i class="ri-line-chart-line"></i> Monthly Energy Consumption (kWh)</h4>
+            <canvas id="chartParticipation" height="140"></canvas>
+          </div>
+          <div class="panel chart-panel">
+            <h4><i class="ri-pie-chart-2-line"></i> Waste Composition</h4>
+            <canvas id="chartSpaceUsage" height="140"></canvas>
+          </div>
+          <div class="panel chart-panel">
+            <h4><i class="ri-group-line"></i> Department-wise Engagement</h4>
+            <canvas id="chartDept" height="140"></canvas>
+          </div>
+          <div class="panel map-panel">
+            <h4><i class="ri-map-pin-line"></i> Impact Map</h4>
+            <div id="impactMap" class="map small"></div>
+            <div class="map-legend">
+              <span><i class="ri-checkbox-blank-circle-fill dot-low"></i> Low</span>
+              <span><i class="ri-checkbox-blank-circle-fill dot-mid"></i> Medium</span>
+              <span><i class="ri-checkbox-blank-circle-fill dot-high"></i> High</span>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>© 2025 Campus Verse Events • Prototype</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" style="position:fixed;right:16px;top:16px;min-width:260px;max-width:360px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,12,0.12);padding:10px 14px;color:#0f172a;display:none;z-index:1000">
+    <span id="toastMsg"></span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./dashboard.js"></script>
+  <script>
+    (function(){
+      try{
+        const n = localStorage.getItem('cv_name');
+        const chip = document.getElementById('welcomeChipDash');
+        if(n && chip){ chip.textContent = 'Welcome, ' + n; chip.style.display='inline-block'; }
+        const t = localStorage.getItem('cv_toast');
+        if(t){
+          const el = document.getElementById('toast');
+          const msg = document.getElementById('toastMsg');
+          if(el && msg){
+            msg.textContent = t;
+            el.style.display = 'block';
+            el.style.opacity = '0';
+            el.style.transition = 'opacity 250ms ease, transform 250ms ease';
+            el.style.transform = 'translateY(-6px)';
+            requestAnimationFrame(()=>{ el.style.opacity='1'; el.style.transform='translateY(0)'; });
+            setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(-6px)'; }, 2400);
+            setTimeout(()=>{ el.style.display='none'; }, 2800);
+          }
+          localStorage.removeItem('cv_toast');
+        }
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>
